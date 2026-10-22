@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Trader sign in | OTWORLD E-COMMERCE{% endblock %}
+{% block content %}
+<section class="registration-page">
+    <section class="registration-card account-card">
+        <span class="eyebrow">WELCOME BACK</span>
+        <h1>Trader sign in</h1>
+        <p>Sign in to manage your verified trader account.</p>
+        <form class="registration-form" method="post">
+            {% csrf_token %}
+            <p>
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text"
+                       autocomplete="username" maxlength="150"
+                       value="{{ request.POST.username|default:'' }}" required autofocus>
+            </p>
+            <p>
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password"
+                       autocomplete="current-password" required>
+            </p>
+            <button class="form-submit" type="submit">Sign in</button>
+        </form>
+    </section>
+    <p class="account-switch">New to OTWORLD? <a href="{% url 'accounts:register' %}">Register your business</a>.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Registration submitted | OTWORLD E-COMMERCE{% endblock %}
+{% block content %}
+<section class="registration-page">
+    <section class="registration-card">
+        <span class="eyebrow">REGISTRATION SUBMITTED</span>
+        <div class="confirmation-icon" aria-hidden="true">✓</div>
+        <h1>Thanks for joining</h1>
+        <p>Your trader profile is awaiting verification. We’ll review your details before your account can sign in.</p>
+        <div class="confirmation-actions">
+            <a class="button-light" href="{% url 'core:home' %}">Return to marketplace</a>
+            <a class="text-link" href="{% url 'trader_login' %}">Trader sign in</a>
+        </div>
+    </section>
+    <p class="account-switch">You can return to the marketplace or sign in after approval.</p>
+</section>
+{% endblock %}

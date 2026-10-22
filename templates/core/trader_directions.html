@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Directions to {{ trader.business_name }} | OTWORLD E-COMMERCE{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="">
+{% endblock %}
+{% block content %}
+<section class="registration-page">
+    <section class="directions-card">
+        <span class="eyebrow">CUSTOMER NAVIGATION</span>
+        <h1>Directions to {{ trader.business_name }}</h1>
+        <p class="destination-detail">
+            {{ destination_label|default:"Supplier map location" }}
+        </p>
+
+        <form class="directions-form" id="directionsForm"
+              data-destination-lat="{{ trader.latitude }}"
+              data-destination-lon="{{ trader.longitude }}">
+            <div class="directions-fields">
+                <div>
+                    <label for="origin">Your current location</label>
+                    <input id="origin" name="origin" type="text"
+                           placeholder="Enter a town, area or address" required>
+                </div>
+                <div>
+                    <label for="destination">Destination</label>
+                    <input id="destination" name="destination" type="text"
+                           value="{{ destination_label }}"
+                           data-pinned-label="{{ destination_label }}" required>
+                </div>
+            </div>
+            <div class="directions-actions">
+                <button class="secondary-button" id="useMyLocation" type="button">
+                    Use my current location
+                </button>
+                <button type="submit">Show route</button>
+            </div>
+            <p class="privacy-notice">
+                Map tiles load from OpenStreetMap. When you request directions, entered
+                locations may be sent to its public search service and route coordinates
+                to a public routing service. “Use my current location” asks your browser
+                for permission before sharing device coordinates.
+            </p>
+        </form>
+
+        <p id="directionsStatus" class="map-status" role="status" aria-live="polite">
+            Enter your starting point, or choose to share your device location, then select Show route.
+        </p>
+        <div class="location-map directions-map" id="directionsMap"
+             aria-label="Map showing the supplier location and route"></div>
+        <section class="route-summary" id="routeSummary" hidden>
+            <h2>Route summary</h2>
+            <p id="routeDistance"></p>
+            <ol id="routeSteps"></ol>
+        </section>
+    </section>
+    <p class="back-link"><a href="{% url 'core:home' %}#verified">← Back to verified traders</a></p>
+</section>
+{% endblock %}
+{% block page_scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin="" defer></script>
+<script src="{% static 'js/directions.js' %}?v=2" defer></script>
+{% endblock %}

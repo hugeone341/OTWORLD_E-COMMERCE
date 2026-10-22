@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_head %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="">
+{% endblock %}
+{% block content %}
+    <section class="hero">
+        <div class="hero-content">
+            <span class="eyebrow">ZAMBIA'S MARKETPLACE</span>
+            <h1>Find what you need.<br><span>Connect with Zambia.</span></h1>
+            <p>Discover products, services and businesses from traders across the country.</p>
+
+            <form class="search-form" action="/" method="get">
+                <label class="sr-only" for="searchQuery">Product or service</label>
+                <input id="searchQuery" name="q" type="search"
+                       placeholder="What are you looking for?"
+                       value="{{ query }}" maxlength="150">
+                <label class="sr-only" for="searchLocation">Location</label>
+                <input id="searchLocation" name="location" type="text"
+                       placeholder="Town, district or province"
+                       value="{{ location }}" maxlength="100">
+                <button type="submit">Search</button>
+            </form>
+            <p class="search-note">Browse freely. Customers don't need an account.</p>
+        </div>
+        <section class="hero-map-panel" aria-labelledby="mapDirectionsHeading">
+            <div class="map-panel-heading">
+                <div>
+                    <span class="eyebrow">FIND YOUR WAY</span>
+                    <h2 id="mapDirectionsHeading">Map &amp; directions</h2>
+                </div>
+            </div>
+            <form id="mapPlaceSearch" class="map-place-search">
+                <label class="sr-only" for="mapPlaceQuery">Search a place in Zambia</label>
+                <input id="mapPlaceQuery" type="search"
+                       placeholder="Search a town, area or place" maxlength="150">
+                <button type="submit">Find place</button>
+            </form>
+            <div class="map-route-controls">
+                <div>
+                    <label for="mapOrigin">Your current location</label>
+                    <input id="mapOrigin" type="text"
+                           placeholder="Enter your starting place">
+                </div>
+                <div>
+                    <label for="mapDestination">Destination</label>
+                    <input id="mapDestination" type="text"
+                           placeholder="Search a place or select a map pin">
+                </div>
+                <div class="map-action-row">
+                    <button class="secondary-button" id="mapUseMyLocation" type="button">
+                        Use my location
+                    </button>
+                    <button class="map-primary-button" id="mapShowRoute" type="button">
+                        Get directions
+                    </button>
+                </div>
+            </div>
+            <p class="map-privacy-notice">
+                Map tiles load from OpenStreetMap. Place searches send entered locations
+                to its public search service, and route coordinates go to a public
+                routing service. Device location is only used if you choose to share it.
+            </p>
+            <p id="homeMapStatus" class="map-status" aria-live="polite">
+                Search for a place, select a supplier pin, or click the map to choose a destination.
+            </p>
+            <div class="location-map home-location-map" id="homeMap"
+                 aria-label="Map of Zambia with verified supplier locations"></div>
+            <p id="homeRouteSummary" class="map-route-summary" hidden></p>
+        </section>
+    </section>
+    {{ map_locations|json_script:"verified-trader-map-locations" }}
+
+    {% if query or location %}
+    <section class="results-notice">
+        <strong>Search submitted</strong>
+        <p>
+            {% if query %}Keyword: {{ query }}{% endif %}
+            {% if location %} · Location: {{ location }}{% endif %}
+        </p>
+        <p>Live listing search will be connected when the listings database is implemented.</p>
+    </section>
+    {% endif %}
+
+    <section class="section" id="categories">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">EXPLORE THE MARKETPLACE</span>
+                <h2>Browse categories</h2>
+                <p>Find products and services that match your needs.</p>
+            </div>
+        </div>
+        <div class="category-grid">
+            {% for category in categories %}
+            <a class="category-card" href="/?category={{ category.name|urlencode }}">
+                <span class="category-icon" aria-hidden="true">{{ category.icon }}</span>
+                <span class="category-name">{{ category.name }}</span>
+                <span class="category-arrow" aria-hidden="true">↗</span>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="location-section" id="locations">
+        <div>
+            <span class="eyebrow">DISCOVER NEAR YOU</span>
+            <h2>Explore across Zambia</h2>
+            <p>Search by province, district or town to find relevant traders and services.</p>
+        </div>
+        <form action="/" method="get" class="location-form">
+            <label for="provinceSearch">Where are you searching?</label>
+            <input id="provinceSearch" name="location" type="text"
+                   placeholder="e.g. Lusaka, Kitwe, Ndola" maxlength="100">
+            <button type="submit">Explore locations</button>
+        </form>
+    </section>
+
+    <section class="section verified-section" id="verified">
+        <span class="eyebrow">TRUST MATTERS</span>
+        <h2>Verified traders</h2>
+        <p>Find businesses that have passed the platform's verification process.</p>
+        {% if traders %}
+        <div class="trader-grid">
+            {% for trader in traders %}
+            <article class="trader-card">
+                <span class="eyebrow">VERIFIED TRADER</span>
+                <h3>{{ trader.business_name }}</h3>
+                <p>
+                    {% if trader.local_area %}{{ trader.local_area }}{% endif %}
+                    {% if trader.district %}{% if trader.local_area %}, {% endif %}{{ trader.district }}{% endif %}
+                    {% if trader.province %}{% if trader.local_area or trader.district %}, {% endif %}{{ trader.province }}{% endif %}
+                </p>
+                {% if trader.latitude is not None and trader.longitude is not None %}
+                <a class="button-light"
+                   href="{% url 'core:trader_directions' trader.id %}">Get directions</a>
+                {% else %}
+                <p class="map-status">Directions are not available for this trader yet.</p>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">◎</span>
+            <h3>Verified businesses will appear here</h3>
+            <p>Verified traders with business locations will be listed here.</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <section class="join-banner">
+        <div>
+            <span class="eyebrow">GROW YOUR BUSINESS</span>
+            <h2>Are you a trader?</h2>
+            <p>Prepare to showcase your products and services to customers across Zambia.</p>
+        </div>
+        <a class="button-light" href="{% url 'accounts:register' %}">Join as a trader</a>
+    </section>
+{% endblock %}
+{% block page_scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin="" defer></script>
+<script src="{% static 'js/home-map.js' %}?v=2" defer></script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#071b3a">
+    <meta name="description" content="{% block meta_description %}Discover products, services and verified traders across Zambia with OTWORLD E-COMMERCE.{% endblock %}">
+    <title>{% block title %}OTWORLD E-COMMERCE | Zambia's Marketplace{% endblock %}</title>
+    {% block extra_head %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/site.css' %}?v=2">
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header">
+    <a class="brand" href="{% url 'core:home' %}">
+        <span class="brand-mark" aria-hidden="true">O</span>
+        <span>OTWORLD <strong>E-COMMERCE</strong></span>
+    </a>
+    <nav class="header-nav" id="mainNavigation" aria-label="Main navigation">
+        <a href="{% url 'core:home' %}#categories">Categories</a>
+        <a href="{% url 'core:home' %}#locations">Locations</a>
+        <a href="{% url 'core:home' %}#verified">Verified traders</a>
+        {% if request.user.is_authenticated and request.user.trader_profile %}
+        <a class="trader-link" href="{% url 'trader_dashboard' %}">My dashboard</a>
+        {% else %}
+        <a class="trader-link" href="{% url 'trader_login' %}">Trader login</a>
+        {% endif %}
+    </nav>
+    <button class="menu-toggle" id="menuToggle" type="button"
+            aria-label="Toggle navigation" aria-controls="mainNavigation"
+            aria-expanded="false">Menu</button>
+</header>
+
+<main id="main-content">
+    {% if messages %}
+    <div class="message-stack" aria-live="polite" aria-atomic="true">
+        {% for message in messages %}
+        <p class="site-message site-message-{{ message.tags|default:'info' }}"
+           role="{% if message.tags == 'error' %}alert{% else %}status{% endif %}">
+            {{ message }}
+        </p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+    <a class="brand footer-brand" href="{% url 'core:home' %}">
+        <span class="brand-mark" aria-hidden="true">O</span>
+        <span>OTWORLD <strong>E-COMMERCE</strong></span>
+    </a>
+    <p>Connecting Zambian traders and customers.</p>
+    <nav class="footer-links" aria-label="Footer navigation">
+        <a href="{% url 'core:home' %}">Marketplace</a>
+        <a href="{% url 'accounts:register' %}">Join as a trader</a>
+        <a href="{% url 'trader_login' %}">Trader login</a>
+    </nav>
+    <p class="copyright">&copy; {% now "Y" %} OTWORLD E-COMMERCE. All rights reserved.</p>
+</footer>
+<script src="{% static 'js/site.js' %}?v=2" defer></script>
+{% block page_scripts %}{% endblock %}
+</body>
+</html>

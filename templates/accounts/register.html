@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Trader registration | OTWORLD E-COMMERCE{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="">
+{% endblock %}
+{% block content %}
+<section class="registration-page">
+    <section class="registration-card">
+        <span class="eyebrow">GROW YOUR BUSINESS</span>
+        <h1>Trader registration</h1>
+        <p>Set up your trader account and business profile. Your profile will be reviewed before you can sign in.</p>
+        <form class="registration-form" id="traderRegistrationForm" method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+            <div class="form-errors" role="alert">
+                {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+            </div>
+            {% endif %}
+            {{ form.as_p }}
+            <div class="pin-picker">
+                <h2>Pin your shop or business location</h2>
+                <p>
+                    Tap the map to place or move your pin. Map tiles are provided by
+                    OpenStreetMap. Your device location is only used if you choose to
+                    share it; the pin is saved with your profile when you register.
+                </p>
+                <button class="secondary-button" id="useBusinessLocation" type="button">
+                    Use this device's location
+                </button>
+                <div class="location-map" id="traderLocationMap" aria-label="Map for selecting your business location"></div>
+                <p id="traderLocationStatus" class="map-status" aria-live="polite">
+                    No map pin selected. You can add one now or update it later.
+                </p>
+            </div>
+            <button class="form-submit" type="submit">Create trader account</button>
+        </form>
+    </section>
+    <p class="account-switch">Already registered? <a href="{% url 'trader_login' %}">Sign in to your trader account</a>.</p>
+</section>
+{% endblock %}
+{% block page_scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin="" defer></script>
+<script src="{% static 'js/trader-location.js' %}?v=2" defer></script>
+{% endblock %}

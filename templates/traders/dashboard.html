@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Trader dashboard | OTWORLD E-COMMERCE{% endblock %}
+{% block content %}
+<section class="dashboard-page">
+    <div class="dashboard-heading">
+        <div>
+            <span class="eyebrow">TRADER ACCOUNT</span>
+            <h1>Welcome, {{ profile.business_name }}</h1>
+            <p>Manage your business presence on the OTWORLD marketplace.</p>
+        </div>
+        <form method="post" action="{% url 'trader_logout' %}">
+            {% csrf_token %}
+            <button class="secondary-button" type="submit">Sign out</button>
+        </form>
+    </div>
+
+    <section class="dashboard-card" aria-labelledby="businessProfileHeading">
+        <div class="dashboard-card-heading">
+            <div>
+                <span class="eyebrow">BUSINESS PROFILE</span>
+                <h2 id="businessProfileHeading">Your profile</h2>
+            </div>
+            <span class="verification-badge">Verified trader</span>
+        </div>
+        <dl class="profile-details">
+            <div><dt>Business</dt><dd>{{ profile.business_name }}</dd></div>
+            <div><dt>Contact phone</dt><dd>{{ profile.phone }}</dd></div>
+            {% if profile.whatsapp_number %}
+            <div><dt>WhatsApp</dt><dd>{{ profile.whatsapp_number }}</dd></div>
+            {% endif %}
+            {% if profile.plot_number %}
+            <div><dt>Plot number</dt><dd>{{ profile.plot_number }}</dd></div>
+            {% endif %}
+            {% if profile.local_area or profile.district or profile.province %}
+            <div>
+                <dt>Location</dt>
+                <dd>
+                    {% if profile.local_area %}{{ profile.local_area }}{% endif %}
+                    {% if profile.district %}{% if profile.local_area %}, {% endif %}{{ profile.district }}{% endif %}
+                    {% if profile.province %}{% if profile.local_area or profile.district %}, {% endif %}{{ profile.province }}{% endif %}
+                </dd>
+            </div>
+            {% endif %}
+            {% if profile.description %}
+            <div class="profile-description"><dt>About your business</dt><dd>{{ profile.description|linebreaksbr }}</dd></div>
+            {% endif %}
+        </dl>
+        {% if profile.latitude is not None and profile.longitude is not None %}
+        <a class="button-light" href="{% url 'core:trader_directions' profile.id %}">Preview customer directions</a>
+        {% else %}
+        <p class="map-status">Your profile has no saved map pin, so customers cannot request directions to your business yet.</p>
+        {% endif %}
+    </section>
+
+    <section class="dashboard-card dashboard-notice">
+        <span class="eyebrow">WHAT'S NEXT</span>
+        <h2>Your trader profile is live</h2>
+        <p>Customers can find your verified business and use its saved map pin for directions.</p>
+        <a class="text-link" href="{% url 'core:home' %}#verified">View the marketplace</a>
+    </section>
+</section>
+{% endblock %}
