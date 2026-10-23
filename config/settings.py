@@ -13,6 +13,30 @@ if not SECRET_KEY or SECRET_KEY == "replace-this-with-a-secret-key":
     raise RuntimeError("Set a real DJANGO_SECRET_KEY in your .env file.")
 
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
+SECURE_HSTS_SECONDS = int(
+    os.getenv("DJANGO_SECURE_HSTS_SECONDS", "0" if DEBUG else "300")
+)
+
+SECURE_SSL_REDIRECT = (
+    os.getenv(
+        "DJANGO_SECURE_SSL_REDIRECT",
+        "False" if DEBUG else "True",
+    ).lower() == "true"
+)
+
+SESSION_COOKIE_SECURE = (
+    os.getenv(
+        "DJANGO_SESSION_COOKIE_SECURE",
+        "False" if DEBUG else "True",
+    ).lower() == "true"
+)
+
+CSRF_COOKIE_SECURE = (
+    os.getenv(
+        "DJANGO_CSRF_COOKIE_SECURE",
+        "False" if DEBUG else "True",
+    ).lower() == "true"
+)
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.getenv(
