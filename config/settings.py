@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+SECRET_KEY = os.getenv("NSM3m2t5X36IdE0FQO15RrmD9vk6aBUmgf0eYv_IDaR-NlbuJAQWz5bEkseS-rUMRzI")
 if not SECRET_KEY or SECRET_KEY == "replace-this-with-a-secret-key":
     raise RuntimeError("Set a real DJANGO_SECRET_KEY in your .env file.")
 
